@@ -1,48 +1,60 @@
-Automação de Solicitação Operacional
+📌 Automação de Solicitação Operacional
 
-Automação desenvolvida para transformar solicitações enviadas via Google Forms em tarefas estruturadas no ClickUp, com registro em planilha e notificação automática por e-mail, utilizando n8n self-hosted e Google Apps Script.
+Este projeto apresenta uma automação end-to-end desenvolvida para transformar solicitações operacionais enviadas via Google Forms em tarefas estruturadas no ClickUp, com registro automático em planilha e notificação por e-mail em HTML.
 
-O objetivo é centralizar solicitações operacionais, padronizar informações e reduzir atividades manuais em ambientes corporativos.
+A solução utiliza n8n self-hosted integrado ao Google Apps Script, com foco em padronização, rastreabilidade e redução de atividades manuais em ambientes corporativos.
 
-🧩 Tecnologias utilizadas
+🎯 Objetivo
 
-Google Forms
+Centralizar solicitações operacionais em um único fluxo automatizado, garantindo:
 
-Google Sheets
+Padronização das informações
 
-Google Apps Script
+Criação automática de tarefas
 
-n8n (Self-hosted)
+Registro histórico das solicitações
 
-ClickUp API REST
+Comunicação imediata com os envolvidos
 
-Gmail (envio de e-mails HTML)
+🧩 Tecnologias Utilizadas
 
-🔄 Fluxo da automação
+Google Forms – Coleta das solicitações
 
-Usuário envia a solicitação via Google Forms
+Google Sheets – Registro e histórico dos dados
 
-Google Apps Script captura o evento onFormSubmit
+Google Apps Script – Captura do evento onFormSubmit
+
+n8n (Self-hosted) – Orquestração da automação
+
+ClickUp API REST – Criação automática de tarefas
+
+Gmail – Envio de notificações em e-mail HTML
+
+🔄 Fluxo da Automação
+
+O usuário envia uma solicitação via Google Forms
+
+O Google Apps Script captura o evento onFormSubmit
 
 Os dados são enviados via Webhook para o n8n
 
-O n8n cria automaticamente uma tarefa no ClickUp via API
+O n8n processa as informações e cria uma tarefa no ClickUp
 
-Os campos da tarefa são padronizados com Markdown e emojis
+Os campos da tarefa são formatados com Markdown e emojis
 
-A solicitação é registrada no Google Sheets
+A solicitação é registrada automaticamente no Google Sheets
 
-Um e-mail de notificação HTML é enviado com os dados da solicitação
+Um e-mail HTML de notificação é enviado com os dados da solicitação
 
-📝 Estrutura da tarefa no ClickUp
+📝 Estrutura da Tarefa no ClickUp
 
 👤 Solicitante
 
-📝 Descrição detalhada
+📝 Descrição detalhada da solicitação
 
 ⚠️ Prioridade, destacada visualmente com emojis
 
-🎯 Diferenciais
+🎯 Diferenciais do Projeto
 
 Integração real entre múltiplas plataformas
 
@@ -50,7 +62,7 @@ Uso de Webhooks em ambiente self-hosted
 
 Criação automática de tarefas via ClickUp API
 
-Registro histórico das solicitações
+Registro histórico das solicitações em planilha
 
 Notificação por e-mail com layout profissional
 
@@ -66,9 +78,9 @@ Uso de placeholders para publicação em repositório público
 
 Nenhuma credencial sensível versionada
 
-📌 Possíveis evoluções
+📌 Possíveis Evoluções
 
-SLA automático por prioridade
+SLA automático com base na prioridade
 
 Notificações adicionais (WhatsApp / Telegram)
 
@@ -76,6 +88,8 @@ Dashboard de acompanhamento das solicitações
 
 Atribuição automática de responsáveis
 
-💡 Observação
-Projeto desenvolvido com foco em boas práticas de automação, clareza operacional e aplicabilidade real, ideal para demonstração em portfólio profissional.
+Integração com sistemas internos (ERP / ITSM)
 
+💡 Observação
+
+Projeto desenvolvido com foco em boas práticas de automação, clareza operacional e aplicabilidade real, sendo ideal para demonstração em portfólio profissional, especialmente para vagas de RPA Developer, Automation Engineer e n8n Specialist.
