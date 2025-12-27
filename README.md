@@ -2,7 +2,7 @@
 
 Este projeto apresenta uma automação end-to-end desenvolvida para transformar solicitações operacionais enviadas via Google Forms em tarefas estruturadas no ClickUp, com registro automático em planilha e notificação por e-mail em HTML.
 
-A solução utiliza n8n self-hosted integrado ao Google Apps Script, com foco em padronização, rastreabilidade e redução de atividades manuais em ambientes corporativos.
+A solução utiliza n8n em ambiente self-hosted, integrado ao Google Apps Script (JavaScript), com foco em padronização, rastreabilidade e redução de atividades manuais em ambientes corporativos.
 
 🎯 Objetivo
 
@@ -22,7 +22,7 @@ Google Forms – Coleta das solicitações
 
 Google Sheets – Registro e histórico dos dados
 
-Google Apps Script – Captura do evento onFormSubmit
+Google Apps Script (JavaScript) – Captura do evento onFormSubmit e envio via Webhook
 
 n8n (Self-hosted) – Orquestração da automação
 
@@ -32,28 +32,83 @@ Gmail – Envio de notificações em e-mail HTML
 
 🔄 Fluxo da Automação
 
-![Tarefa criada no ClickUp](Clickup.gif)
+Etapas do Fluxo
 
-![Tarefa criada no ClickUp](forms.png)
-
-![Tarefa criada no ClickUp](clickup_painel.png)
-
-![Tarefa criada no ClickUp](clickup_interior.png)
-
-![Tarefa criada no ClickUp](clickup_gmail.png)
-
+O usuário envia a solicitação via Google Forms
 
 O Google Apps Script captura o evento onFormSubmit
 
 Os dados são enviados via Webhook para o n8n
 
-O n8n processa as informações e cria uma tarefa no ClickUp
+O n8n processa as informações e cria automaticamente uma tarefa no ClickUp
 
 Os campos da tarefa são formatados com Markdown e emojis
 
 A solicitação é registrada automaticamente no Google Sheets
 
 Um e-mail HTML de notificação é enviado com os dados da solicitação
+
+🧠 Lógica em JavaScript (Google Apps Script)
+
+A automação utiliza Google Apps Script (JavaScript) para:
+
+Gerar um número único de chamado, reiniciado automaticamente a cada ano
+
+Capturar os dados enviados pelo Google Forms
+
+Enviar os dados estruturados via Webhook para o n8n
+
+📌 Geração do Número de Chamado
+
+Formato gerado automaticamente:
+
+AAAA-0001
+Exemplo: 2025-0001
+
+📜 Código Utilizado
+function gerarNumeroChamado() {
+  const props = PropertiesService.getScriptProperties();
+  const anoAtual = new Date().getFullYear();
+
+  const ultimoAno = props.getProperty('ULTIMO_ANO');
+  let sequencial = Number(props.getProperty('SEQUENCIAL')) || 0;
+
+  // Se mudou o ano, zera o contador
+  if (ultimoAno !== String(anoAtual)) {
+    sequencial = 0;
+    props.setProperty('ULTIMO_ANO', String(anoAtual));
+  }
+
+  sequencial++;
+  props.setProperty('SEQUENCIAL', String(sequencial));
+
+  // Formato: 2025-0001
+  return `${anoAtual}-${String(sequencial).padStart(4, '0')}`;
+}
+
+function onFormSubmit(e) {
+  const row = e.values;
+
+  const numeroChamado = gerarNumeroChamado();
+
+  const payload = {
+    numero_chamado: numeroChamado,
+    nome: row[2],
+    tipo: row[3],
+    descricao: row[4],
+    prioridade: row[5]
+  };
+
+  UrlFetchApp.fetch(
+    'https://SEU-ENDPOINT-N8N/webhook/solicitacao-operacional',
+    {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    }
+  );
+}
 
 📝 Estrutura da Tarefa no ClickUp
 
@@ -69,15 +124,17 @@ Integração real entre múltiplas plataformas
 
 Uso de Webhooks em ambiente self-hosted
 
+Numeração automática de chamados por ano
+
 Criação automática de tarefas via ClickUp API
 
-Registro histórico das solicitações em planilha
+Registro histórico das solicitações
 
 Notificação por e-mail com layout profissional
 
 Padronização visual das informações
 
-Projeto pronto para uso em ambiente corporativo
+Pronto para uso em ambiente corporativo
 
 🔐 Segurança
 
