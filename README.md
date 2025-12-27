@@ -34,7 +34,7 @@ Gmail (HTML Email)
 
 Demonstração do fluxo completo da automação em execução.
 
-![Tarefa criada no ClickUp](clickup_painel.png)
+![Tarefa criada no ClickUp](clickup.gifs)
 
 1️⃣ Envio da Solicitação
 
