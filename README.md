@@ -53,15 +53,19 @@ O Google Apps Script captura o evento onFormSubmit, gera o número do chamado e 
 
 O n8n processa os dados recebidos e cria automaticamente a tarefa no ClickUp.
 
-![Tarefa criada no ClickUp](Clickup.png)
+![Tarefa criada no ClickUp](clickup_painel.png)
 
 4️⃣ Detalhamento e Padronização
 
 A tarefa é criada com campos padronizados, utilizando Markdown e emojis para facilitar a leitura.
 
+![Tarefa criada no ClickUp](clickup_interior.png)
+
 5️⃣ Notificação por E-mail
 
 Após a criação da tarefa, um e-mail HTML profissional é enviado com os dados da solicitação.
+
+![Tarefa criada no ClickUp](clickup_interior.png)
 
 🧠 Lógica em JavaScript (Google Apps Script)
 
