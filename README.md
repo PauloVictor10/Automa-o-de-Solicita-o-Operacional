@@ -1,77 +1,79 @@
 📌 Automação de Solicitação Operacional
 
-Este projeto apresenta uma automação end-to-end desenvolvida para transformar solicitações operacionais enviadas via Google Forms em tarefas estruturadas no ClickUp, com registro automático em planilha e notificação por e-mail em HTML.
+Automação end-to-end que transforma solicitações operacionais enviadas via Google Forms em tarefas estruturadas no ClickUp, com registro automático em planilha e notificação por e-mail em HTML.
 
-A solução utiliza n8n em ambiente self-hosted, integrado ao Google Apps Script (JavaScript), com foco em padronização, rastreabilidade e redução de atividades manuais em ambientes corporativos.
+A solução foi desenvolvida utilizando n8n (self-hosted) e Google Apps Script (JavaScript), com foco em padronização, rastreabilidade e eficiência operacional.
 
-🎯 Objetivo
+🎯 Objetivo do Projeto
 
-Centralizar solicitações operacionais em um único fluxo automatizado, garantindo:
+Centralizar solicitações operacionais em um fluxo único e automatizado, garantindo:
 
 Padronização das informações
 
 Criação automática de tarefas
 
-Registro histórico das solicitações
+Histórico auditável das solicitações
 
 Comunicação imediata com os envolvidos
 
 🧩 Tecnologias Utilizadas
 
-Google Forms – Coleta das solicitações
+Google Forms
 
-Google Sheets – Registro e histórico dos dados
+Google Sheets
 
-Google Apps Script (JavaScript) – Captura do evento onFormSubmit
+Google Apps Script (JavaScript)
 
-n8n (Self-hosted) – Orquestração da automação
+n8n (Self-hosted)
 
-ClickUp API REST – Criação automática de tarefas
+ClickUp API REST
 
-Gmail – Envio de notificações em e-mail HTML
+Gmail (HTML Email)
 
 🔄 Visão Geral da Automação
 
-📝 Etapas do Fluxo
+Demonstração do fluxo completo da automação em execução.
+
+![Tarefa criada no ClickUp](clickup_painel.png)
+
 1️⃣ Envio da Solicitação
 
-O usuário preenche e envia o formulário de solicitação operacional.
+O usuário preenche o formulário operacional.
 
-2️⃣ Captura do Evento
+![Tarefa criada no ClickUp](forms.png)
 
-O Google Apps Script captura o evento onFormSubmit e inicia o processamento dos dados.
 
-3️⃣ Envio dos Dados via Webhook
+2️⃣ Captura e Processamento
 
-Os dados são enviados via Webhook para o n8n, onde o fluxo é orquestrado.
+O Google Apps Script captura o evento onFormSubmit, gera o número do chamado e envia os dados ao n8n via Webhook.
 
-4️⃣ Criação da Tarefa no ClickUp
+3️⃣ Criação da Tarefa no ClickUp
 
-O n8n cria automaticamente a tarefa no ClickUp utilizando a API REST.
+O n8n processa os dados recebidos e cria automaticamente a tarefa no ClickUp.
 
-5️⃣ Padronização das Informações
+4️⃣ Detalhamento e Padronização
 
-Os campos da tarefa são formatados com Markdown e emojis, garantindo leitura clara e padrão visual.
+A tarefa é criada com campos padronizados, utilizando Markdown e emojis para facilitar a leitura.
 
-6️⃣ Registro e Notificação
+5️⃣ Notificação por E-mail
 
-A solicitação é registrada automaticamente no Google Sheets e um e-mail HTML é enviado com os dados da solicitação.
+Após a criação da tarefa, um e-mail HTML profissional é enviado com os dados da solicitação.
 
 🧠 Lógica em JavaScript (Google Apps Script)
 
-A automação utiliza JavaScript para:
+O Google Apps Script é responsável por:
 
-Gerar um número único de chamado, reiniciado automaticamente a cada ano
+Gerar um número único de chamado por ano
 
-Capturar os dados enviados pelo formulário
+Capturar os dados enviados pelo Google Forms
 
-Enviar os dados estruturados para o n8n via Webhook
+Enviar os dados estruturados ao n8n
 
 📌 Padrão do Número do Chamado
 AAAA-0001
 Exemplo: 2025-0001
 
-📜 Código do Google Apps Script
+📜 Código Principal
 function gerarNumeroChamado() {
   const props = PropertiesService.getScriptProperties();
   const anoAtual = new Date().getFullYear();
@@ -117,48 +119,44 @@ function onFormSubmit(e) {
 
 👤 Solicitante
 
-📝 Descrição detalhada da solicitação
+📝 Descrição detalhada
 
-⚠️ Prioridade com destaque visual por emojis
+⚠️ Prioridade com destaque visual
 
-🎯 Diferenciais do Projeto
+⭐ Diferenciais do Projeto
 
 Integração real entre múltiplas plataformas
 
-Uso de Webhooks em ambiente self-hosted
+Webhooks em ambiente self-hosted
 
-Numeração automática de chamados por ano
+Numeração automática de chamados
 
-Criação automática de tarefas via ClickUp API
+Criação automática de tarefas via API
 
-Registro histórico das solicitações
+Registro histórico centralizado
 
-Notificação por e-mail com layout profissional
+Notificação por e-mail profissional
 
-Padronização visual das informações
-
-Pronto para uso em ambiente corporativo
+Layout pensado para operação real
 
 🔐 Segurança
 
-Tokens, URLs reais e IDs sensíveis foram removidos
-
-Uso de placeholders para publicação em repositório público
-
 Nenhuma credencial sensível versionada
 
-📌 Possíveis Evoluções
+Tokens e URLs substituídos por placeholders
 
-SLA automático com base na prioridade
+Projeto seguro para repositório público
 
-Notificações adicionais (WhatsApp / Telegram)
+🚀 Possíveis Evoluções
 
-Dashboard de acompanhamento das solicitações
+SLA automático por prioridade
+
+Notificações via WhatsApp / Telegram
+
+Dashboard gerencial
 
 Atribuição automática de responsáveis
 
-Integração com sistemas internos (ERP / ITSM)
+💡 Observação Final
 
-💡 Observação
-
-Projeto desenvolvido com foco em boas práticas de automação, clareza operacional e aplicabilidade real, sendo ideal para portfólio profissional, especialmente para vagas de RPA Developer, Automation Engineer e n8n Specialist.
+Projeto desenvolvido com foco em automação corporativa real, boas práticas de integração e clareza operacional, sendo ideal para portfólio técnico em vagas de RPA Developer, Automation Engineer e n8n Specialist.
