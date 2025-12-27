@@ -32,6 +32,8 @@ Gmail – Envio de notificações em e-mail HTML
 
 🔄 Fluxo da Automação
 
+![Demonstração da Automação](Clickup.gif)
+
 Etapas do Fluxo
 
 O usuário envia a solicitação via Google Forms
