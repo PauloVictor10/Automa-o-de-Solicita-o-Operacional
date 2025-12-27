@@ -32,7 +32,7 @@ Gmail – Envio de notificações em e-mail HTML
 
 🔄 Fluxo da Automação
 
-![Demo](assets/gifs/Clickup.gif)
+![Tarefa criada no ClickUp](Clickup.gif)
 
 ![Tarefa criada no ClickUp](forms.png)
 
