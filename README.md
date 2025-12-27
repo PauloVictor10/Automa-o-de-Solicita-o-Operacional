@@ -65,7 +65,7 @@ A tarefa é criada com campos padronizados, utilizando Markdown e emojis para fa
 
 Após a criação da tarefa, um e-mail HTML profissional é enviado com os dados da solicitação.
 
-![Tarefa criada no ClickUp](clickup_interior.png)
+![Tarefa criada no ClickUp](clickup_gmail.png)
 
 🧠 Lógica em JavaScript (Google Apps Script)
 
