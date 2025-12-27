@@ -47,6 +47,8 @@ O usuário preenche o formulário operacional.
 
 O Google Apps Script captura o evento onFormSubmit, gera o número do chamado e envia os dados ao n8n via Webhook.
 
+
+
 3️⃣ Criação da Tarefa no ClickUp
 
 O n8n processa os dados recebidos e cria automaticamente a tarefa no ClickUp.
