@@ -34,11 +34,14 @@ Gmail – Envio de notificações em e-mail HTML
 
 ![Demo](assets/gifs/Clickup.gif)
 
+![Tarefa criada no ClickUp](forms.png)
+
 ![Tarefa criada no ClickUp](clickup_painel.png)
 
+![Tarefa criada no ClickUp](clickup_interior.png)
 
+![Tarefa criada no ClickUp](clickup_gmail.png)
 
-O usuário envia uma solicitação via Google Forms
 
 O Google Apps Script captura o evento onFormSubmit
 
