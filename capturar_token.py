@@ -19,12 +19,12 @@ import sys
 import time
 
 
-# Frontend real que gera os tokens (PNCP - Portal Nacional de Contratações Públicas)
-PORTAL_URL = "https://pncp.gov.br/"
-# Rota de compras dentro do PNCP
-PORTAL_COMPRAS_URL = "https://pncp.gov.br/app/compras"
-# Domínio da API interceptada
-API_HOST = "cnetmobile.estaleiro.serpro.gov.br"
+# Frontend real do ComprasNet Web
+BASE_HOST = "https://cnetmobile.estaleiro.serpro.gov.br"
+PORTAL_URL = f"{BASE_HOST}/comprasnet-web/"
+PORTAL_COMPRAS_URL = f"{BASE_HOST}/comprasnet-web/public/compras"
+# Domínio da API interceptada (mesmo servidor, path diferente)
+API_HOST = "comprasnet-fase-externa/public/v1"
 
 STEALTH_SCRIPT = """
 // Remove indicadores de webdriver
@@ -199,12 +199,12 @@ async def capturar_token():
         await asyncio.sleep(6)
 
         if not tokens_encontrados:
-            # Etapa 2: testa URLs alternativas do PNCP
+            # Etapa 2: rotas alternativas no comprasnet-web
             rotas_alt = [
-                "https://pncp.gov.br/app/compras?q=&status=homologado&ano=2025",
-                "https://pncp.gov.br/app/editais",
-                "https://pncp.gov.br/app/contratos",
-                "https://pncp.gov.br/",
+                f"{BASE_HOST}/comprasnet-web/public/compras?tamanhoPagina=10&pagina=0",
+                f"{BASE_HOST}/comprasnet-web/public/compras/acompanhamento-compra",
+                f"{BASE_HOST}/comprasnet-web/",
+                f"{BASE_HOST}/comprasnet-web/public/",
             ]
             for rota in rotas_alt:
                 print(f"[2/3] Tentando: {rota}")
@@ -220,16 +220,15 @@ async def capturar_token():
             # Etapa 3: clicar em links de compras/licitações na página atual
             print("[3/3] Procurando links clicáveis na página...")
             for seletor in [
-                "a[href*='compras']", "a[href*='licitac']", "a[href*='edital']",
-                "button[class*='compra']", "button[class*='licita']",
-                "nav a", "header a", ".menu a",
+                "a[href*='compras']", "a[href*='licitac']", "a[href*='acompanhamento']",
+                "button", "nav a", "header a",
             ]:
                 try:
                     elementos = await page.query_selector_all(seletor)
                     for el in elementos[:5]:
                         try:
                             texto = await el.inner_text()
-                            if any(p in texto.lower() for p in ["compra", "licita", "edital", "contrat", "busca"]):
+                            if any(p in texto.lower() for p in ["compra", "licita", "acompanha", "busca", "pesquisa"]):
                                 await el.click()
                                 await asyncio.sleep(4)
                                 if tokens_encontrados:
