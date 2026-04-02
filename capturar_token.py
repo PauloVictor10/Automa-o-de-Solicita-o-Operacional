@@ -19,8 +19,12 @@ import sys
 import time
 
 
-PORTAL_URL = "https://cnetmobile.estaleiro.serpro.gov.br/comprasnet-fase-externa/"
-API_PATH = "/comprasnet-fase-externa/public/v1/compras"
+# Frontend real que gera os tokens (PNCP - Portal Nacional de Contratações Públicas)
+PORTAL_URL = "https://pncp.gov.br/"
+# Rota de compras dentro do PNCP
+PORTAL_COMPRAS_URL = "https://pncp.gov.br/app/compras"
+# Domínio da API interceptada
+API_HOST = "cnetmobile.estaleiro.serpro.gov.br"
 
 STEALTH_SCRIPT = """
 // Remove indicadores de webdriver
@@ -100,7 +104,7 @@ async def capturar_token():
     print("=" * 60)
     print(" CAPTURADOR DE TOKEN - ComprasNet")
     print("=" * 60)
-    print(f"\nAbrindo: {PORTAL_URL}")
+    print(f"\nAbrindo: {PORTAL_COMPRAS_URL} (PNCP)")
     print("\nINSTRUÇÕES:")
     print("1. O browser abrirá automaticamente")
     print("2. Navegue até a seção de Compras/Licitações")
@@ -142,7 +146,7 @@ async def capturar_token():
 
         async def on_request(request):
             url = request.url
-            if API_PATH in url and "captcha=" in url:
+            if API_HOST in url and "captcha=" in url:
                 try:
                     parte = url.split("captcha=")[1]
                     token = parte.split("&")[0]
@@ -171,7 +175,7 @@ async def capturar_token():
                         try {
                             const obj = JSON.parse(v);
                             const str = JSON.stringify(obj);
-                            const m = str.match(/P1_[A-Za-z0-9_\-\.]{100,}/);
+                            const m = str.match(/P1_[A-Za-z0-9_.\\-]{100,}/);
                             if (m) return m[0];
                         } catch(e) {}
                     }
@@ -186,49 +190,48 @@ async def capturar_token():
 
         # ── Navegação para acionar o captcha ────────────────────────────────
 
-        # Etapa 1: carrega a raiz do portal SPA
-        print("[1/3] Carregando portal principal (raiz)...")
+        # Etapa 1: vai direto para a página de compras do PNCP
+        print(f"[1/3] Abrindo portal PNCP - Compras...")
         try:
-            await page.goto(PORTAL_URL, wait_until="domcontentloaded", timeout=60_000)
+            await page.goto(PORTAL_COMPRAS_URL, wait_until="domcontentloaded", timeout=60_000)
         except Exception as e:
             print(f"  Aviso: {e}")
-        await asyncio.sleep(5)  # aguarda SPA inicializar
+        await asyncio.sleep(6)
 
         if not tokens_encontrados:
-            # Etapa 2: testa rotas hash do SPA (sem barra extra após #)
-            rotas_hash = [
-                f"{PORTAL_URL}#/compras",
-                f"{PORTAL_URL}#compras",
-                f"{PORTAL_URL}#/licitacoes",
-                f"{PORTAL_URL}#/pesquisa",
-                f"{PORTAL_URL}#/busca",
+            # Etapa 2: testa URLs alternativas do PNCP
+            rotas_alt = [
+                "https://pncp.gov.br/app/compras?q=&status=homologado&ano=2025",
+                "https://pncp.gov.br/app/editais",
+                "https://pncp.gov.br/app/contratos",
+                "https://pncp.gov.br/",
             ]
-            for rota in rotas_hash:
-                print(f"[2/3] Tentando rota hash: {rota}")
+            for rota in rotas_alt:
+                print(f"[2/3] Tentando: {rota}")
                 try:
                     await page.goto(rota, wait_until="domcontentloaded", timeout=20_000)
-                    await asyncio.sleep(4)
+                    await asyncio.sleep(5)
                     if tokens_encontrados:
                         break
                 except Exception:
                     pass
 
         if not tokens_encontrados:
-            # Etapa 3: clicar em links visíveis na página
+            # Etapa 3: clicar em links de compras/licitações na página atual
             print("[3/3] Procurando links clicáveis na página...")
             for seletor in [
-                "a[href*='compras']", "a[href*='licitac']",
+                "a[href*='compras']", "a[href*='licitac']", "a[href*='edital']",
                 "button[class*='compra']", "button[class*='licita']",
-                "nav a", "header a", ".menu a", "a", "button",
+                "nav a", "header a", ".menu a",
             ]:
                 try:
                     elementos = await page.query_selector_all(seletor)
                     for el in elementos[:5]:
                         try:
                             texto = await el.inner_text()
-                            if any(p in texto.lower() for p in ["compra", "licita", "busca", "pesquisa", "contrat"]):
+                            if any(p in texto.lower() for p in ["compra", "licita", "edital", "contrat", "busca"]):
                                 await el.click()
-                                await asyncio.sleep(3)
+                                await asyncio.sleep(4)
                                 if tokens_encontrados:
                                     break
                         except Exception:
