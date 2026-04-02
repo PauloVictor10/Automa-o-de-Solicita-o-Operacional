@@ -159,49 +159,78 @@ async def capturar_token():
 
         page.on("request", on_request)
 
-        # ── Navegação em etapas para acionar a geração do captcha ──────────
+        # Intercepta também o localStorage/sessionStorage depois do carregamento
+        async def tentar_extrair_token_js():
+            """Tenta extrair token via JavaScript do contexto da página."""
+            try:
+                resultado = await page.evaluate("""() => {
+                    const keys = Object.keys(localStorage).concat(Object.keys(sessionStorage));
+                    for (const k of keys) {
+                        const v = localStorage.getItem(k) || sessionStorage.getItem(k) || '';
+                        if (v.startsWith('P1_') && v.length > 100) return v;
+                        try {
+                            const obj = JSON.parse(v);
+                            const str = JSON.stringify(obj);
+                            const m = str.match(/P1_[A-Za-z0-9_\-\.]{100,}/);
+                            if (m) return m[0];
+                        } catch(e) {}
+                    }
+                    return null;
+                }""")
+                if resultado and resultado.startswith("P1_"):
+                    if resultado not in tokens_encontrados:
+                        tokens_encontrados.append(resultado)
+                        print(f"\n TOKEN via localStorage: {resultado[:70]}...")
+            except Exception:
+                pass
 
-        # Etapa 1: portal principal (carrega JS do iCaptcha)
-        print(f"[1/3] Carregando portal principal...")
+        # ── Navegação para acionar o captcha ────────────────────────────────
+
+        # Etapa 1: carrega a raiz do portal SPA
+        print("[1/3] Carregando portal principal (raiz)...")
         try:
             await page.goto(PORTAL_URL, wait_until="domcontentloaded", timeout=60_000)
         except Exception as e:
             print(f"  Aviso: {e}")
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)  # aguarda SPA inicializar
 
         if not tokens_encontrados:
-            # Etapa 2: navegar para a rota de compras dentro do SPA
-            rotas_spa = [
+            # Etapa 2: testa rotas hash do SPA (sem barra extra após #)
+            rotas_hash = [
                 f"{PORTAL_URL}#/compras",
+                f"{PORTAL_URL}#compras",
                 f"{PORTAL_URL}#/licitacoes",
-                f"{PORTAL_URL}compras",
+                f"{PORTAL_URL}#/pesquisa",
+                f"{PORTAL_URL}#/busca",
             ]
-            for rota in rotas_spa:
-                print(f"[2/3] Tentando rota: {rota}")
+            for rota in rotas_hash:
+                print(f"[2/3] Tentando rota hash: {rota}")
                 try:
                     await page.goto(rota, wait_until="domcontentloaded", timeout=20_000)
-                    await asyncio.sleep(3)
+                    await asyncio.sleep(4)
                     if tokens_encontrados:
                         break
                 except Exception:
                     pass
 
         if not tokens_encontrados:
-            # Etapa 3: clicar nos links da página
-            print("[3/3] Procurando links de compras para clicar...")
+            # Etapa 3: clicar em links visíveis na página
+            print("[3/3] Procurando links clicáveis na página...")
             for seletor in [
-                "a[href*='compras']", "a[href*='licitacoes']",
+                "a[href*='compras']", "a[href*='licitac']",
                 "button[class*='compra']", "button[class*='licita']",
-                "nav a", "header a", ".menu a",
+                "nav a", "header a", ".menu a", "a", "button",
             ]:
                 try:
                     elementos = await page.query_selector_all(seletor)
-                    for el in elementos[:3]:
+                    for el in elementos[:5]:
                         try:
-                            await el.click()
-                            await asyncio.sleep(2)
-                            if tokens_encontrados:
-                                break
+                            texto = await el.inner_text()
+                            if any(p in texto.lower() for p in ["compra", "licita", "busca", "pesquisa", "contrat"]):
+                                await el.click()
+                                await asyncio.sleep(3)
+                                if tokens_encontrados:
+                                    break
                         except Exception:
                             pass
                     if tokens_encontrados:
@@ -209,17 +238,19 @@ async def capturar_token():
                 except Exception:
                     pass
 
-        # Aguarda até 90 segundos; o usuário pode navegar manualmente
-        print("\nAguardando token (máx. 90s)...")
-        if not tokens_encontrados:
-            print("Se o browser travar ou pedir interação, faça isso agora.")
-        for i in range(90):
+        # Aguarda até 120s — usuário pode navegar manualmente no browser aberto
+        print("\nAguardando token (máx. 120s)...")
+        print(">>> Se o browser parecer vazio, navegue manualmente até a seção de Compras/Licitações <<<")
+        for i in range(120):
             await asyncio.sleep(1)
             if tokens_encontrados:
-                await asyncio.sleep(2)   # captura tokens adicionais
+                await asyncio.sleep(2)
                 break
-            if (i + 1) % 15 == 0:
-                print(f"  ...{i + 1}s aguardados (navegue até Compras se necessário)")
+            # A cada 5s tenta extrair do localStorage
+            if (i + 1) % 5 == 0:
+                await tentar_extrair_token_js()
+            if (i + 1) % 20 == 0:
+                print(f"  ...{i + 1}s (navegue no browser se necessário)")
 
         await browser.close()
 
