@@ -146,25 +146,3 @@ Registro histórico centralizado
 Notificação por e-mail profissional
 
 Layout pensado para operação real
-
-🔐 Segurança
-
-Nenhuma credencial sensível versionada
-
-Tokens e URLs substituídos por placeholders
-
-Projeto seguro para repositório público
-
-🚀 Possíveis Evoluções
-
-SLA automático por prioridade
-
-Notificações via WhatsApp / Telegram
-
-Dashboard gerencial
-
-Atribuição automática de responsáveis
-
-💡 Observação Final
-
-Projeto desenvolvido com foco em automação corporativa real, boas práticas de integração e clareza operacional, sendo ideal para portfólio técnico em vagas de RPA Developer, Automation Engineer e n8n Specialist.
